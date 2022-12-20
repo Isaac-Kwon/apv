@@ -1,0 +1,6 @@
+ana0*.cpp
+build
+.vscode
+*.root
+*.code-workspace
+data
