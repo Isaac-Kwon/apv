@@ -1,17 +1,17 @@
-#ifndef __APVANABASE__
-#define __APVANABASE__
+#ifndef __APVANATASKBASE__
+#define __APVANATASKBASE__
 
 #include "string"
 #include "fstream"
 
 class TTree;
 
-class APVAnaBase{
+class APVAnaTaskBase{
     public:
-    APVAnaBase();
-    APVAnaBase(std::string filename, std::string name="APVAna0", short Nx=256, short Ny=256);
-    APVAnaBase(const APVAnaBase& other);
-    ~APVAnaBase();
+    APVAnaTaskBase();
+    APVAnaTaskBase(std::string filename, std::string name="APVAna0", short Nx=256, short Ny=256);
+    APVAnaTaskBase(const APVAnaTaskBase& other);
+    ~APVAnaTaskBase();
 
     void BuildTree();
     void ReadData();

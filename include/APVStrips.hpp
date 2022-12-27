@@ -23,20 +23,24 @@ class APVStrips{
     APVStrips(int n, short* val, std::string name="APVStrip0");
     ~APVStrips();
     void FindBaseline();
-    void Compensate();
+    void Adjust();
     StripResult Analysis(bool ignoreCompensate=false);
 
     const int     GetN()  {return fN;}
     short*  GetV()  {return fV;}
     TF1    * GetF1()      {return fF1;}
     TF1    * GetF2()      {return fF2;}
-    TGraph * GetGraph()              {return fG0;}
-    TGraph * GetGraphCompensated()   {return fG1;}
-    TH1I   * GetSigHist()            {return fH0;}
-    TH1I   * GetSigHistCompensated() {return fH1;}
+    TGraph * GetGraph()           {return fG0;}
+    TGraph * GetGraphAdjusted()   {return fG1;}
+    TH1I   * GetSigHist()         {return fH0;}
+    TH1I   * GetSigHistAdjusted() {return fH1;}
+
+    int  Integrate();
+    float GetMean();
+    short GetFired(short thres=150, bool overcount=true);
 
     bool IsBaselined(){return fBaselined;}
-    bool IsCompensated(){return fCompensated;}
+    bool IsAdjusted(){return fAdjusted;}
 
     protected:
     private:
@@ -54,8 +58,8 @@ class APVStrips{
     TH1I   * fH0 = nullptr; // SignalHistogram - RAW
     TH1I   * fH1 = nullptr; // SignalHistogram - Compensated
 
-    bool fBaselined   = false;
-    bool fCompensated = false;
+    bool fBaselined = false;
+    bool fAdjusted  = false;
 };
 
 #endif

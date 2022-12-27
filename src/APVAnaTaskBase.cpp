@@ -1,18 +1,18 @@
-#include "APVAnaBase.hpp"
+#include "APVAnaTaskBase.hpp"
 
 #include "TTree.h"
 #include "TString.h"
 #include "cstdlib"
 #include "iostream"
 
-APVAnaBase::APVAnaBase(): fFileName(), fName("APVAna0"){;}
+APVAnaTaskBase::APVAnaTaskBase(): fFileName(), fName("APVAna0"){;}
 
-APVAnaBase::APVAnaBase(std::string filename, std::string name, short Nx, short Ny): fFileName(filename), fName(name), fNx(Nx), fNy(Ny){
+APVAnaTaskBase::APVAnaTaskBase(std::string filename, std::string name, short Nx, short Ny): fFileName(filename), fName(name), fNx(Nx), fNy(Ny){
     fX = (short*)std::malloc(sizeof(short)*fNx);
     fY = (short*)std::malloc(sizeof(short)*fNy);
 }
 
-APVAnaBase::APVAnaBase(const APVAnaBase& other):
+APVAnaTaskBase::APVAnaTaskBase(const APVAnaTaskBase& other):
     fFileName(other.fFileName),
     fName(other.fName),
     fNx(other.fNx),
@@ -23,30 +23,30 @@ APVAnaBase::APVAnaBase(const APVAnaBase& other):
     fY = (short*)std::malloc(sizeof(short)*fNy);
 }
 
-APVAnaBase::~APVAnaBase(){
+APVAnaTaskBase::~APVAnaTaskBase(){
     std::free(fX);
     std::free(fY);
     if(fTree != nullptr) fTree->Delete();
 }
 
-void APVAnaBase::BuildTree(){
+void APVAnaTaskBase::BuildTree(){
     fTree = new TTree(TString::Format("tree_%s",fName.c_str()), fName.c_str());
     fTree->Branch("i", &fI, "i/i");
     fTree->Branch("x", fX, TString::Format("x[%d]/S",fNx));
     fTree->Branch("y", fY, TString::Format("y[%d]/S",fNy));
 }
 
-void APVAnaBase::ReadData(){
+void APVAnaTaskBase::ReadData(){
     if(IsDataRead()) return;
     std::string tempstr;
     fIfs.open(fFileName);
     fIfs>>tempstr;
     fN = std::stoi(tempstr);
     
-    std::cout<<"APVAnaBase::ReadData - " << fN <<" Event will be read"<<std::endl;
+    std::cout<<"APVAnaTaskBase::ReadData - " << fN <<" Event will be read"<<std::endl;
 
     if(fTree == nullptr){
-        std::cout<<"APVAnaBase::ReadData - Tree is built automatically."<<std::endl;
+        std::cout<<"APVAnaTaskBase::ReadData - Tree is built automatically."<<std::endl;
         BuildTree();
     }
 
@@ -65,8 +65,8 @@ void APVAnaBase::ReadData(){
     fIsDataRead=true;
 }
 
-void APVAnaBase::SaveRawTree(std::string filename){
+void APVAnaTaskBase::SaveRawTree(std::string filename){
     fTree->SaveAs(filename.c_str());
 }
 
-void APVAnaBase::Analysis(){std::cout<<"APVAnaBase::Analysis - virtual function is not overrided"<<std::endl;}
+void APVAnaTaskBase::Analysis(){std::cout<<"APVAnaTaskBase::Analysis - virtual function is not overrided"<<std::endl;}

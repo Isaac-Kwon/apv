@@ -34,7 +34,7 @@ void APVStrips::FindBaseline(){
     fBaselined = true;
 }
 
-void APVStrips::Compensate(){
+void APVStrips::Adjust(){
     if(!fBaselined) FindBaseline();
     
 
@@ -56,11 +56,11 @@ void APVStrips::Compensate(){
         }
     }
 
-    fCompensated = true;
+    fAdjusted = true;
 }
 
 StripResult APVStrips::Analysis(bool ignoreCompensate){
-    if(!fCompensated && !ignoreCompensate) Compensate();
+    if(!fAdjusted && !ignoreCompensate) Adjust();
 
     float sum0=0, sum1=0, sum2=0;
     for(int i=0; i<fN; i++){
@@ -89,3 +89,36 @@ StripResult APVStrips::Analysis(bool ignoreCompensate){
 
     return ans;
 }
+
+int APVStrips::Integrate(){
+    if(!IsAdjusted()) Adjust();
+
+    //simple sum of values
+    int ans = 0.;
+    for(int i=0; i<GetN(); i++){
+        ans+=fV[i];
+    }
+
+    return ans;
+}
+
+float APVStrips::GetMean(){
+    if(!IsAdjusted()) Adjust();
+    float sum0 = 0;
+    for(int i=0; i<fN; i++){
+        sum0 += fV[i];
+    }
+    return sum0/fN;
+}
+
+short APVStrips::GetFired(short thres, bool overcount){
+    if(!IsAdjusted()) Adjust();
+    short ans = 0;
+    for(int i=0; i<fN; i++){
+        if(overcount && fV[i] >= thres) ans++;
+        if((!overcount) && fV[i] < thres) ans++;
+    }
+    return ans;
+}
+
+

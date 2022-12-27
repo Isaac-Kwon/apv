@@ -1,4 +1,4 @@
-#include "APVAnaRun.hpp"
+#include "APVAnaTaskRun.hpp"
 
 #include "string"
 #include "APVStrips.hpp"
@@ -9,20 +9,20 @@
 #include "TTree.h"
 #include "TPaveText.h"
 
-APVAnaRun::APVAnaRun():APVAnaBase(){;}
+APVAnaTaskRun::APVAnaTaskRun():APVAnaTaskBase(){;}
 
-APVAnaRun::APVAnaRun(std::string filename, std::string name, short Nx, short Ny):
-APVAnaBase(filename, name, Nx, Ny){;}
+APVAnaTaskRun::APVAnaTaskRun(std::string filename, std::string name, short Nx, short Ny):
+APVAnaTaskBase(filename, name, Nx, Ny){;}
 
-void APVAnaRun::GraphOne(int i, std::string name){
+void APVAnaTaskRun::GraphOne(int i, std::string name){
     ReadData();
 
     TTree * rt = GetRawTree();
     unsigned int * ii = GetIp();
-    short * x = GetX();
-    short * y = GetY();
-    short nx = GetNX();
-    short ny = GetNY();
+    short *     x  = GetX();
+    short *     y  = GetY();
+    short       nx = GetNX();
+    short       ny = GetNY();
     unsigned int n = GetN();
 
     rt->GetEntry(i);
@@ -31,8 +31,8 @@ void APVAnaRun::GraphOne(int i, std::string name){
     APVStrips * sy = new APVStrips(ny, y, "APVStripY");
     sx->FindBaseline();
     sy->FindBaseline();
-    sx->Compensate();
-    sy->Compensate();
+    sx->Adjust();
+    sy->Adjust();
     StripResult resx = sx->Analysis();
     StripResult resy = sy->Analysis();
 
@@ -50,9 +50,9 @@ void APVAnaRun::GraphOne(int i, std::string name){
     sy->GetF2()->Draw("SAME");
     c1->cd(3);
     // std::cout<<"Plot3"<<std::endl;
-    sx->GetGraphCompensated()->Draw();
-    sx->GetGraphCompensated()->GetYaxis()->SetRangeUser(-400, 5000);
-    sx->GetGraphCompensated()->GetYaxis()->SetLimits(-400, 5000);
+    sx->GetGraphAdjusted()->Draw();
+    sx->GetGraphAdjusted()->GetYaxis()->SetRangeUser(-400, 5000);
+    sx->GetGraphAdjusted()->GetYaxis()->SetLimits(-400, 5000);
     TPaveText * pave_x = new TPaveText(0.6, 0.75, 0.95, 0.95, "NB NDC");
     pave_x->AddText(TString::Format("Mean: %.2f", resx.mean));
     pave_x->AddText(TString::Format("Stdev: %.2f", resx.stdev));
@@ -61,9 +61,9 @@ void APVAnaRun::GraphOne(int i, std::string name){
     pave_x->Draw();
     c1->cd(4);
     // std::cout<<"Plot4"<<std::endl;
-    sy->GetGraphCompensated()->Draw();
-    sy->GetGraphCompensated()->GetYaxis()->SetRangeUser(-400, 5000);
-    sy->GetGraphCompensated()->GetYaxis()->SetLimits(-400, 5000);
+    sy->GetGraphAdjusted()->Draw();
+    sy->GetGraphAdjusted()->GetYaxis()->SetRangeUser(-400, 5000);
+    sy->GetGraphAdjusted()->GetYaxis()->SetLimits(-400, 5000);
     TPaveText * pave_y = new TPaveText(0.6, 0.75, 0.95, 0.95, "NB NDC");
     pave_y->AddText(TString::Format("Mean: %.2f", resy.mean));
     pave_y->AddText(TString::Format("Stdev: %.2f", resy.stdev));
@@ -80,7 +80,8 @@ void APVAnaRun::GraphOne(int i, std::string name){
     return;
 }
 
-void APVAnaRun::Analysis(){
+void APVAnaTaskRun::Analysis(){
+
 
 }
 

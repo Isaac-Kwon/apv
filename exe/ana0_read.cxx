@@ -1,12 +1,15 @@
 #include "iostream"
-// #include "APVAnaBase.hpp"
-#include "APVAnaRun.hpp"
+
+#include "APVAnaTaskRun.hpp"
 #include "TString.h"
+#include "TCanvas.h"
 
 int main(){
-    APVAnaRun * bb = new APVAnaRun("../data/kriss_data/apv_2022120720.txt");
-    // bb->Analysis();
-    for(int i=0; i<100; i++){
+    // APVAnaRun * bb = new APVAnaRun("../data/kriss_data/apv_2022120725.txt"); //gamma
+    // APVAnaRun * bb = new APVAnaRun("../data/kriss_data/apv_2022120803.txt"); //10% sheiding neutron
+    APVAnaTaskRun * bb = new APVAnaTaskRun("../data/kriss_data/apv_2022120725.txt"); //neutron
+
+    for(int i=0; i<20; i++){
         bb->GraphOne(i, TString::Format("c1_%d.pdf", i).Data());
     }
 
