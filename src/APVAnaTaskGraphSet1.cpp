@@ -52,9 +52,8 @@ void APVAnaTaskGraphSet1::GraphOne(int i, std::string name){
     sx->GetGraphAdjusted()->GetYaxis()->SetLimits(-400, 5000);
     TPaveText * pave_x = new TPaveText(0.6, 0.75, 0.95, 0.95, "NB NDC");
     pave_x->AddText(TString::Format("Mean: %.2f", resx.mean));
-    pave_x->AddText(TString::Format("Stdev: %.2f", resx.stdev));
-    pave_x->AddText(TString::Format("Skewness: %.2f", resx.skewness));
-    pave_x->AddText(TString::Format("[%.1f,%.1f,%.1f]", resx.sum0,resx.sum1,resx.sum2));
+    pave_x->AddText(TString::Format("Sum0: %.2f", resx.sum0));
+    pave_x->AddText(TString::Format("Sum1: %.2f", resx.sum1));
     pave_x->Draw();
     c1->cd(4);
     sy->GetGraphAdjusted()->Draw();
@@ -62,9 +61,9 @@ void APVAnaTaskGraphSet1::GraphOne(int i, std::string name){
     sy->GetGraphAdjusted()->GetYaxis()->SetLimits(-400, 5000);
     TPaveText * pave_y = new TPaveText(0.6, 0.75, 0.95, 0.95, "NB NDC");
     pave_y->AddText(TString::Format("Mean: %.2f", resy.mean));
-    pave_y->AddText(TString::Format("Stdev: %.2f", resy.stdev));
-    pave_y->AddText(TString::Format("Skewness: %.2f", resy.skewness));
-    pave_y->AddText(TString::Format("[%.1f,%.1f,%.1f]", resy.sum0,resy.sum1,resy.sum2));
+    pave_y->AddText(TString::Format("Mean: %.2f", resy.mean));
+    pave_y->AddText(TString::Format("Sum0: %.2f", resy.sum0));
+    pave_y->AddText(TString::Format("Sum1: %.2f", resy.sum1));
     pave_y->Draw();
 
     c1->SaveAs(name.c_str());
