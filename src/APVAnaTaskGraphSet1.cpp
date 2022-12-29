@@ -1,7 +1,7 @@
 #include "APVAnaTaskGraphSet1.hpp"
 
 #include "string"
-#include "APVStrips.hpp"
+#include "APVStrip.hpp"
 #include "TAxis.h"
 #include "TCanvas.h"
 #include "TF1.h"
@@ -27,8 +27,8 @@ void APVAnaTaskGraphSet1::GraphOne(int i, std::string name){
 
     rt->GetEntry(i);
     
-    APVStrips * sx = new APVStrips(nx, x, "APVStripX");
-    APVStrips * sy = new APVStrips(ny, y, "APVStripY");
+    APVStrip * sx = new APVStrip(nx, x, "APVStripX");
+    APVStrip * sy = new APVStrip(ny, y, "APVStripY");
     sx->FindBaseline();
     sy->FindBaseline();
     sx->Adjust();

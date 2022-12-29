@@ -1,5 +1,5 @@
-#ifndef __APVSTRIPS__
-#define __APVSTRIPS__
+#ifndef __APVSTRIP__
+#define __APVSTRIP__
 
 #include "string"
 
@@ -8,23 +8,39 @@ class TH1I;
 class TGraph;
 
 struct StripResult{
-    float mean;
-    float stdev;
-    float variance;
-    float skewness;
-    float sum0;
-    float sum1;
-    float sum2;
+    float mean;   // mean without thres
+    float mean_f; // mean with thres
+    short peakstrip;
+    short peakvalue;
+    float sum0;   // sum0 without thres
+    float sum0_f; // sum0 with thres
+    float sum1;   // sum1 with thres
+    float sum1_f; // sum1 with thres
+    short nfired; // Nstrip over thres
+
+    StripResult(): mean(0),mean_f(0),peakstrip(0),peakvalue(0),sum0(0),sum0_f(0),sum1(0),sum1_f(0),nfired(0){;}
+
+    StripResult(const StripResult& oth){
+        mean = oth.mean;
+        mean_f = oth.mean_f;
+        peakstrip = oth.peakstrip;
+        peakvalue = oth.peakvalue;
+        sum0 = oth.sum0;
+        sum0_f = oth.sum0_f;
+        sum1 = oth.sum1;
+        sum1_f = oth.sum1_f;
+        nfired = oth.nfired;
+    }
 };
 
 
-class APVStrips{
+class APVStrip{
     public:
-    APVStrips(int n, short* val, std::string name="APVStrip0");
-    ~APVStrips();
+    APVStrip(int n, short* val, std::string name="APVStrip0");
+    ~APVStrip();
     void FindBaseline();
     void Adjust();
-    StripResult Analysis(bool ignoreCompensate=false);
+    StripResult Analysis(short thres=100, bool ignoreCompensate=false);
 
     const int     GetN()  {return fN;}
     short*  GetV()  {return fV;}
@@ -36,7 +52,7 @@ class APVStrips{
     TH1I   * GetSigHistAdjusted() {return fH1;}
 
     int  Integrate();
-    float GetMean();
+    float GetMean(short thres=-1);
     short GetFired(short thres=150, bool overcount=true);
 
     bool IsBaselined(){return fBaselined;}

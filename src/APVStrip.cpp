@@ -1,12 +1,12 @@
-#include "APVStrips.hpp"
+#include "APVStrip.hpp"
 #include "TF1.h"
 #include "TGraph.h"
 #include "TH1I.h"
 #include "TMath.h"
 
-APVStrips::APVStrips(int n, short* val, std::string name):fName(name), fN(n), fV(val) {;}
+APVStrip::APVStrip(int n, short* val, std::string name):fName(name), fN(n), fV(val) {;}
 
-APVStrips::~APVStrips(){
+APVStrip::~APVStrip(){
     if(fF1!=nullptr) fF1->Delete();
     if(fF2!=nullptr) fF2->Delete();
     if(fG0!=nullptr) fG0->Delete();
@@ -15,7 +15,7 @@ APVStrips::~APVStrips(){
     if(fH1!=nullptr) fH1->Delete();
 }
 
-void APVStrips::FindBaseline(){
+void APVStrip::FindBaseline(){
     fG0 = new TGraph();
     fH0 = new TH1I(TString::Format("%sh0",fName.c_str()), fName.c_str(),
                                   410, -100, 4000);
@@ -34,7 +34,7 @@ void APVStrips::FindBaseline(){
     fBaselined = true;
 }
 
-void APVStrips::Adjust(){
+void APVStrip::Adjust(){
     if(!fBaselined) FindBaseline();
     
 
@@ -59,38 +59,42 @@ void APVStrips::Adjust(){
     fAdjusted = true;
 }
 
-StripResult APVStrips::Analysis(bool ignoreCompensate){
+StripResult APVStrip::Analysis(short thres, bool ignoreCompensate){
     if(!fAdjusted && !ignoreCompensate) Adjust();
 
-    float sum0=0, sum1=0, sum2=0;
+    float sum0=0, sum1=0, sum2=0, sum0_f=0, sum1_f=0;
+    short nfired=0, peakstrip=-1, peakvalue=-1 ;
     for(int i=0; i<fN; i++){
         sum0 += fV[i];
         sum1 += fV[i] * i;
-        sum2 += fV[i] * i * i;
+        if(fV[i]>thres){
+            sum0_f += fV[i];
+            sum1_f += fV[i] * i;
+            nfired++;
+        }
+        
+        if(peakvalue < fV[i]){
+            peakvalue = fV[i];
+            peakstrip = i;
+        }
     }
 
     StripResult ans;
-    ans.mean = sum1/sum0;
-    ans.variance = (sum2/sum0)-((ans.mean)*(ans.mean));
-    ans.stdev = TMath::Sqrt(ans.variance);
 
-    double temp;
-
-    for(int i=0; i<fN; i++){
-        double x = (i-ans.mean)/(ans.stdev);
-        temp += x*x*x*3;
-    }
-
-    ans.skewness = temp/sum0;
-
-    ans.sum0 = sum0;
-    ans.sum1 = sum1;
-    ans.sum2 = sum2;
+    ans.mean   = sum1/sum0;
+    ans.mean_f = sum1_f/sum0_f;
+    ans.sum0   = sum0;
+    ans.sum0_f = sum0_f;
+    ans.sum1   = sum1;
+    ans.sum1_f = sum1_f;
+    ans.nfired = nfired;
+    ans.peakstrip = peakstrip;
+    ans.peakvalue = peakvalue;
 
     return ans;
 }
 
-int APVStrips::Integrate(){
+int APVStrip::Integrate(){
     if(!IsAdjusted()) Adjust();
 
     //simple sum of values
@@ -102,16 +106,20 @@ int APVStrips::Integrate(){
     return ans;
 }
 
-float APVStrips::GetMean(){
+float APVStrip::GetMean(short thres){
     if(!IsAdjusted()) Adjust();
     float sum0 = 0;
+    int   n    = 0;
     for(int i=0; i<fN; i++){
-        sum0 += fV[i];
+        if(fV[i]>thres){
+            sum0 += fV[i];
+            n++;
+        }
     }
-    return sum0/fN;
+    return sum0/n;
 }
 
-short APVStrips::GetFired(short thres, bool overcount){
+short APVStrip::GetFired(short thres, bool overcount){
     if(!IsAdjusted()) Adjust();
     short ans = 0;
     for(int i=0; i<fN; i++){
