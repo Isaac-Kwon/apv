@@ -1,7 +1,9 @@
 
 
 set(TEST_EXE
-    ana0_read
+    ana0_graphone
+    ana1_stripana
+    ana1x1_stripana_period
 )
 
 # for now put the executables in the build root
