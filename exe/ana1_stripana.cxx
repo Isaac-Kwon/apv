@@ -6,9 +6,8 @@
 #include "TTree.h"
 
 int main(){
-    // APVAnaTaskRun * bb = new APVAnaTaskRun("../data/kriss_data/apv_2022120725.txt"); //gamma
-    // APVAnaTaskRun * bb = new APVAnaTaskRun("../data/kriss_data/apv_2022120803.txt"); //10% sheiding neutron
-    APVAnaTaskRun * bb = new APVAnaTaskRun("../data/kriss_data/apv_2022120725.txt"); //neutron
+    // APVAnaTaskRun * bb = new APVAnaTaskRun("../data/kriss_data/apv_2022120803.txt"); //10% sheiding neutron 5669
+    APVAnaTaskRun * bb = new APVAnaTaskRun("../data/kriss_data/apv_2022120725.txt"); //gamma 28439
 
     // for(int i=0; i<20; i++){
     //     // bb->GraphOne(i, TString::Format("c1_%d.pdf", i).Data());

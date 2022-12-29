@@ -32,7 +32,7 @@ void APVAnaTaskRun::Analysis(){
     unsigned int n = GetN();
 
     for(int i=fStartEntry; i<n ; i++){
-        if(fEndEntry > 0 && i>fEndEntry) break;
+        if(fEndEntry > 0 && i>=fEndEntry) break;
         std::cout<<"APVAnaTaskRun::Analysis - i="<<i<<std::endl;
         rt->GetEntry(i);
         APVStrip * sx = new APVStrip(nx, x, "APVStripX");
